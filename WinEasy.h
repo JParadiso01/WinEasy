@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <time.h>
+#include <string.h>
 
 typedef struct {
     int r;
@@ -49,7 +50,10 @@ void WinEasyDrawRect(HDC screen, Color color, RECT rect);
 void WinEasyDrawCircle(HDC screen, Color color, int x, int y, int radius);
 void WinEasyDrawEllipse(HDC screen, Color color, RECT ellipse_rect);
 
-COLORREF WinEasyColorToCOLORREf(Color color);
+void WinEasyDrawText(HDC screen, Color txtColor, char * string, int x, int y);
+
+
+COLORREF WinEasyColorToCOLORREF(Color color);
 HBRUSH WinEasyColorToHBRUSH(Color color);
 
 void WinEasySleepForFrames(float frames, clock_t begTime, clock_t endTime);
@@ -110,33 +114,41 @@ void WinEasyEndBackBuffer(PAINTSTRUCT ps, HWND hwnd, HDC backHDC, HBITMAP backBu
 }
 
 void WinEasyDrawBackground(HDC screen, Color color, RECT rect){
-    HBRUSH brush = CreateSolidBrush(RGB(color.r, color.g, color.b));
+    HBRUSH brush = WinEasyColorToHBRUSH(color);
     SelectObject(screen, brush);
     Rectangle(screen,rect.left,rect.top,rect.right,rect.bottom);
     DeleteObject(brush);
 }
 void WinEasyDrawRect(HDC screen, Color color, RECT rect){
-    HBRUSH brush = CreateSolidBrush(RGB(color.r, color.g, color.b));
+    HBRUSH brush = WinEasyColorToHBRUSH(color);
     SelectObject(screen, brush);
     Rectangle(screen,rect.left,rect.top,rect.right,rect.bottom);
     DeleteObject(brush);
 }
 
 void WinEasyDrawCircle(HDC screen, Color color, int x, int y, int radius){
-    HBRUSH brush = CreateSolidBrush(RGB(color.r, color.g, color.b));
+    HBRUSH brush = WinEasyColorToHBRUSH(color);
     SelectObject(screen, brush);
     Ellipse(screen, x-radius, y-radius, x+radius, y+radius);
     DeleteObject(brush);
 }
 
 void WinEasyDrawEllipse(HDC screen, Color color, RECT ellipseRect){
-    HBRUSH brush = CreateSolidBrush(RGB(color.r, color.g, color.b));
+    HBRUSH brush = WinEasyColorToHBRUSH(color);
     SelectObject(screen, brush);
     Ellipse(screen,ellipseRect.left,ellipseRect.top,ellipseRect.right,ellipseRect.bottom);
     DeleteObject(brush);
 }
 
-COLORREF WinEasyColorToCOLORREf(Color color){
+void WinEasyDrawText(HDC screen, Color txtColor, char *string, int x, int y){
+    SetTextColor(screen, WinEasyColorToCOLORREF(txtColor));
+    SetBkColor(screen, GetBkColor(screen));
+    TextOutA(screen, x, y, string, strlen(string));
+}
+
+
+
+COLORREF WinEasyColorToCOLORREF(Color color){
     return RGB(color.r, color.g, color.b);
 }
 
